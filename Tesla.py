@@ -12,7 +12,7 @@ dataset.head()
 dataset.shape
 # primeiro problema é dar nomes as colunas
 dataset.columns = ["Caso", "Ano",
-                   "Data", "País", "Estado",
+                   "Data", "Pais", "Estado",
                    "Descrição", "Mortes", "Motorista",
                    "Ocupante", "Outro", "Pedestre",
                    "TSLA", "Modelo", "Alegado Piloto Automático",
@@ -26,29 +26,22 @@ dataset.drop([294, 295, 296, 297, 298, 299, 300, 301,
 
 # EXPLORAR DADOS CATEGÓRICOS
 # País (Agrupar mesmos) AGRUPAR OS QUE TEM 1 EM OUTROS
-pais = dataset['País'].value_counts()
+pais = dataset['Pais'].value_counts()
 pais
-pais.plot.bar(color='gray')
 
 # Estado (Agrupar mesmos) ARRUMAR NOMES E RENOMEAR "-"
 est = dataset['Estado'].value_counts()
 est
-est.plot.bar(color='gray')
 
 # Modelo do Tesla  ARRUMAR (TIRAR O ESPAÇO) NOMES E RENOMEAR "-"
 mod = dataset['Modelo'].value_counts()
 mod
-mod.plot.bar(color='gray')
 
 # EXPLORAR COLUNAS NUMÉRICAS
 # Ano #ajustar valores errados 202 e os anos de 2023
 dataset['Ano'].describe()
 srn.boxplot(dataset['Ano']).set_title('Ano')
 srn.histplot(dataset['Ano']).set_title('Ano')
-
-# Mortes Totais
-dataset['Mortes'].describe()
-srn.histplot(dataset['Mortes']).set_title('Mortes')
 
 # Motorista foi morto #ajustar valores errados "-" e NANs
 dataset['Motorista'].describe()
@@ -70,7 +63,7 @@ dataset['Pedestre'].describe()
 srn.boxplot(dataset['Pedestre']).set_title('Pedestre')
 srn.histplot(dataset['Pedestre']).set_title('Pedestre')
 
-# Alegado Piloto Automático #ajustar valores errados "-" e NANs
+# Quantas pessoas alegaram Piloto Automático #ajustar valores errados "-" e NANs
 dataset['Alegado Piloto Automático'].describe()
 srn.boxplot(dataset['Alegado Piloto Automático']
             ).set_title('Alegado Piloto Automático')
@@ -79,3 +72,57 @@ srn.histplot(dataset['Alegado Piloto Automático']
 
 # procurar valores nulos (0)
 dataset.isnull().sum()
+
+# TRATAMENTO DE DADOS CATEGÓRICOS
+# País. Agrupando os demais em outros e removendo os espaços
+dataset['Pais'] = dataset['Pais'].str.strip()
+dataset.loc[dataset['Pais'].isin(['Portugal', 'South Korea', 'Finland', 'Slovenia', 'Austria',
+                                  'Ukraine', 'Spain', 'Mexico']), 'Pais'] = "Others"
+pais = dataset['Pais'].value_counts()
+pais
+pais.plot.bar(color='gray')
+
+# Estado. Agrupando os demais em outros e removendo os espaços e os '-'
+dataset['Estado'] = dataset['Estado'].str.strip()
+dataset.loc[dataset['Estado'] == '-', 'Estado'] = "Unknown"
+est = dataset['Estado'].value_counts()
+est
+est.plot.bar(color='gray')
+
+# Modelo do carro. Agrupando os demais em outros e removendo os espaços e os '-'
+dataset['Modelo'] = dataset['Modelo'].str.strip()
+dataset.loc[dataset['Modelo'] == '-', 'Modelo'] = "Unknown"
+mod = dataset['Modelo'].value_counts()
+mod
+mod.plot.bar(color='gray')
+
+# TRATAMENTO DE DADOS NUMERICOS
+# Ano. Como o autor fez as datas como string. A substituição fica assim
+dataset.loc[dataset['Data'].isin(['1/7/2023', '1/17/2023']), 'Ano'] = "2023"
+# dataset.loc[(dataset['Data'] > 1/1/2023), 'Ano'] = "2023"
+
+# Motorista.
+dataset['Motorista'] = dataset['Motorista'].str.strip()
+dataset.loc[dataset['Motorista'] == '-', 'Motorista'] = "0"
+dataset['Motorista'].fillna('0', inplace=True)
+
+# Ocupante foi morto.
+dataset['Ocupante'] = dataset['Ocupante'].str.strip()
+dataset.loc[dataset['Ocupante'] == '-', 'Ocupante'] = "0"
+dataset['Ocupante'].fillna('0', inplace=True)
+
+# Em outro veiculo foi morto.
+dataset['Outro'] = dataset['Outro'].str.strip()
+dataset.loc[dataset['Outro'] == '-', 'Outro'] = "0"
+dataset['Outro'].fillna('0', inplace=True)
+
+# Pedestre foi morto
+dataset['Pedestre'] = dataset['Pedestre'].str.strip()
+dataset.loc[dataset['Pedestre'] == '-', 'Pedestre'] = "0"
+dataset['Pedestre'].fillna('0', inplace=True)
+
+# Alegado Piloto Automático
+dataset['Alegado Piloto Automático'] = dataset['Alegado Piloto Automático'].str.strip()
+dataset.loc[dataset['Alegado Piloto Automático']
+            == '-', 'Alegado Piloto Automático'] = "0"
+dataset['Alegado Piloto Automático'].fillna('0')
