@@ -3,6 +3,7 @@ import seaborn as srn
 import statistics as sts
 import numpy as np
 import matplotlib.pyplot as plt
+from datetime import datetime
 
 # importar dados
 dataset = pd.read_csv("Tesla Deaths - Deaths.csv")
@@ -19,7 +20,7 @@ dataset.columns = ["Caso", "Ano",
                    "1", "2", "3", "4", "5", "6", "7", "8", "9", "10"]
 # deletar colunas insignificantes
 dataset.drop(['1', '2', '3', '4', '5', '6', '7',
-             '8', '9', '10', 'TSLA'], axis=1, inplace=True)
+             '8', '9', '10', 'TSLA', 'Ano', 'Caso'], axis=1, inplace=True)
 # deletar linhas insignificantes
 dataset.drop([294, 295, 296, 297, 298, 299, 300, 301,
              302, 303, 304, 305, 306], inplace=True)
@@ -38,11 +39,6 @@ mod = dataset['Modelo'].value_counts()
 mod
 
 # EXPLORAR COLUNAS NUMÉRICAS
-# Ano #ajustar valores errados 202 e os anos de 2023
-dataset['Ano'].describe()
-srn.boxplot(dataset['Ano']).set_title('Ano')
-srn.histplot(dataset['Ano']).set_title('Ano')
-
 # Motorista foi morto #ajustar valores errados "-" e NANs
 dataset['Motorista'].describe()
 srn.boxplot(dataset['Motorista']).set_title('Motorista')
@@ -97,9 +93,9 @@ mod
 mod.plot.bar(color='gray')
 
 # TRATAMENTO DE DADOS NUMERICOS
-# Ano. Como o autor fez as datas como string. A substituição fica assim
-dataset.loc[dataset['Data'].isin(['1/7/2023', '1/17/2023']), 'Ano'] = "2023"
-# dataset.loc[(dataset['Data'] > 1/1/2023), 'Ano'] = "2023"
+# Data. Transformando de String em Data
+dataset['Data'] = pd.to_datetime(dataset['Data'].astype('datetime64[D]'))
+dataset['Data'] = dataset['Data'].dt.date.astype('datetime64[D]')
 
 # Motorista.
 dataset['Motorista'] = dataset['Motorista'].str.strip()
@@ -125,4 +121,51 @@ dataset['Pedestre'].fillna('0', inplace=True)
 dataset['Alegado Piloto Automático'] = dataset['Alegado Piloto Automático'].str.strip()
 dataset.loc[dataset['Alegado Piloto Automático']
             == '-', 'Alegado Piloto Automático'] = "0"
-dataset['Alegado Piloto Automático'].fillna('0')
+dataset['Alegado Piloto Automático'].fillna('0', inplace=True)
+
+# ANÁLISE DOS DADOS
+# Análise das mortes por direção automática da Tesla nos últimos 10 anos
+plt.figure(figsize=(20, 8))
+x = pd.DatetimeIndex(dataset['Data']).year.value_counts().sort_index().index
+y = pd.DatetimeIndex(dataset['Data']).year.value_counts().sort_index().values
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.5, '%.1f' %
+             height, ha='center', va='bottom', size=12)
+plt.title("Número de acidentes por ano")
+plt.xlabel("Anos")
+plt.ylabel("Número de acidentes")
+plt.bar(x, y, color='#e35f62')
+
+# Análise das mortes por direção automática da Tesla por mes em 10 anos
+plt.figure(figsize=(20, 8))
+x = pd.DatetimeIndex(dataset['Data']).month.value_counts().sort_index().index
+y = pd.DatetimeIndex(dataset['Data']).month.value_counts().sort_index().values
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.5, '%.1f' %
+             height, ha='center', va='bottom', size=12)
+plt.title("Número de mortes por mês durante 10 anos")
+plt.xlabel("Meses")
+plt.ylabel("Acidentes")
+plt.bar(x, y, color='#e35f62')
+
+# Análise das mortes por direção automática da Tesla por país
+x = dataset["Pais"].value_counts().index
+y = dataset["Pais"].value_counts().values
+plt.figure(figsize=(20, 8))
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.25, '%.1f' %
+             height, ha='center', va='bottom', size=12)
+plt.bar(x, y, color='#e35f62')
+
+# Análise das mortes por direção automática da Tesla por estado americano
+x = dataset["Estado"].value_counts().index[1:]
+y = dataset["Estado"].value_counts().values[1:]
+plt.figure(figsize=(20, 8))
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.25, '%.1f' %
+             height, ha='center', va='bottom', size=12)
+plt.bar(x, y, color='#e35f62')
