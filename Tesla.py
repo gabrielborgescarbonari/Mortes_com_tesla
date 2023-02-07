@@ -1,9 +1,6 @@
 import pandas as pd
 import seaborn as srn
-import statistics as sts
-import numpy as np
 import matplotlib.pyplot as plt
-from datetime import datetime
 
 # importar dados
 dataset = pd.read_csv("Tesla Deaths - Deaths.csv")
@@ -169,3 +166,56 @@ for i in range(len(x)):
     plt.text(x[i], height + 0.25, '%.1f' %
              height, ha='center', va='bottom', size=12)
 plt.bar(x, y, color='#e35f62')
+
+# Análise dos percentuais de mortes
+x = dataset["Mortes"].astype('int').sum()
+y = dataset["Motorista"].astype('int').sum()
+z = dataset["Ocupante"].astype('int').sum()
+a = dataset["Outro"].astype('int').sum()
+b = dataset["Pedestre"].astype('int').sum()
+c = x - (y+z+a+b)
+labels = 'Carona', 'Motorista', 'Outro Carro', 'Pedestre', 'Desconhecido'
+sizes = [z, y, a, b, c]
+explode = (0.05, 0.05, 0.05, 0.05, 0.05)
+colors = ['#de4777', '#de4747', '#ae47de', '#de47ca', '#de47a7']
+plt.figure(figsize=(9, 9))
+plt.axis("equal")
+plt.rc("font", family="Malgun Gothic")
+plt.pie(sizes, labels=labels,  autopct="%.1f%%",
+        pctdistance=0.85, colors=colors)
+centre_circle = plt.Circle((0, 0), 0.60, fc='white')
+fig = plt.gcf()
+fig.gca().add_artist(centre_circle)
+plt.rc('legend', fontsize=11)
+plt.legend()
+plt.title("Total de mortes: " + str(x), fontsize=18)
+plt.show()
+
+# Análise dos modelos de tesla
+x = dataset["Modelo"].value_counts().index[1:]
+y = dataset["Modelo"].value_counts().values[1:]
+plt.figure(figsize=(9, 7))
+for i in range(len(x)):
+    height = y[i]
+    plt.text(x[i], height + 0.25, '%.1f' %
+             height, ha='center', va='bottom', size=12)
+plt.bar(x, y, color='#e35f62')
+plt.title("Modelos de Tesla mais envolvidos", fontsize=15)
+
+# Análise do número de pessoas que alegaram o piloto automatico ligado
+size = dataset["Alegado Piloto Automático"].value_counts().values
+color = ["darkmagenta", "deeppink", "hotpink"]
+label = dataset["Alegado Piloto Automático"].value_counts().index
+plt.figure(figsize=(12, 12))
+plt.axis("equal")
+plt.rc("font", family="Malgun Gothic")
+plt.pie(size, labels=label, autopct="%.1f%%",
+        pctdistance=0.85, colors=color, explode=(0, 0, 0.05))
+centre_circle = plt.Circle((0, 0), 0.60, fc='white')
+fig = plt.gcf()
+fig.gca().add_artist(centre_circle)
+plt.rc('legend', fontsize=15)
+plt.legend()
+plt.title("Total de pessoas que alegaram Piloto Automático: " +
+          str(len(dataset["Alegado Piloto Automático"])), fontsize=17)
+plt.show()
