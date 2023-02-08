@@ -4,10 +4,3 @@ Disponível em :"https://www.kaggle.com/datasets/ibriiee/tesla-autonomous-deaths
 
 De acordo com o o autor, a descrição da base de dados: "O conjunto de dados Tesla Accidents contém informações sobre acidentes envolvendo veículos Tesla que resultaram na morte de pelo menos uma pessoa, incluindo o local, data e nome do falecido, bem como a presença do piloto automático no momento do acidente. Este conjunto de dados destina-se ao uso por pesquisadores, formuladores de políticas e qualquer pessoa interessada em entender a relação entre os veículos da Tesla e a segurança no trânsito".
 
-Em primeiro lugar, como pode ser facilmente visto no gráfico anual, o volume de acidentes da Tesla tende a aumentar a cada ano. No entanto, deve ser comparado com as vendas da Tesla a este respeito. 
-
-Ao analisar o valor mensal de acidentes por ano, o número de acidentes em novembro e dezembro é o maior. Uma das coisas mais fáceis de prever por esse motivo são os efeitos do clima. Em novembro e dezembro, neva porque é inverno no norte do globo. Em particular, acho que a influência do clima é grande porque os veículos autônomos podem reduzir a capacidade de controlar os carros delicadamente na neve escorregadia.
-
-É nitido que os maiores acidentes foram nos Estados Unidos, possivelmente se deve ao fato de rodarem mais carros por lá, porém é inconclusivo algum outro motivo.
-
-Nesses 10 anos, o numero total de mortes foi de 353, desses, 110 foram o motorista do Tesla, 48 foram passageiros, 130 foram de outro veículo no acidente, 46 foram pedestres atropelados e 12 não se tem informaqções sobre. 

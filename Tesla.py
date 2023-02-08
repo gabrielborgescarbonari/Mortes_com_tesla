@@ -91,7 +91,7 @@ mod.plot.bar(color='gray')
 
 # TRATAMENTO DE DADOS NUMERICOS
 # Data. Transformando de String em Data
-dataset['Data'] = pd.to_datetime(dataset['Data'].astype('datetime64[D]'))
+dataset['Data'] = pd.to_datetime(dataset['Data'])
 dataset['Data'] = dataset['Data'].dt.date.astype('datetime64[D]')
 
 # Motorista.
